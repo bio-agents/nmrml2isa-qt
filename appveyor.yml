@@ -1,0 +1,48 @@
+environment:
+  PYTHON: "C:\\Python35"
+
+branches:
+  only:
+    - master
+
+skip_tags: 
+  false
+
+
+
+install:
+  - set PATH=%PYTHON%;%PYTHON%\Scripts;%APPVEYOR_BUILD_FOLDER%;%PATH%
+  - pip install pyinstaller
+  - pip install imzml2isa-qt
+  - git clone https://github.com/ISA-agents/nmrml2isa
+  - cd nmrml2isa
+  - pip install .
+  - cd ..
+  - pip install .
+
+
+build_script:
+  - cd nmrml2isa_qt
+  - pyinstaller main.spec
+
+artifacts:
+   - path: nmrml2isa_qt\dist\nmrml2isa_gui.exe
+     name: nmrml2isa_qt
+
+
+
+deploy:
+  provider: GitHub
+  description: 'Release description'
+  auth_token:
+    secure: a1VIb788bLXA/fLgAoEJshK1aXtGdj79BNvzPg+YfAIrYhp6yaA4gJa6vp4BpWHS
+  artifact: nmrml2isa_qt
+  draft: false
+  prerelease: true
+  force_update: true
+  on:
+    branch: master
+    appveyor_repo_tag: true
+
+
+
